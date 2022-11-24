@@ -82,3 +82,21 @@ section.result {
   display: flex;
   flex-direction: column;
 }
+.country-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid black;
+  justify-content: center;
+  align-items: center;
+}
+.country-container div {
+  margin-bottom: 20px;
+}
+.country-container div img {
+  max-width: 300px;
+}
+.country-container div h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 10px 0;
+}

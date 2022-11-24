@@ -27,13 +27,42 @@ class guessed {
     ageElement.append(document.createTextNode(`Age : ${age}`));
     return ageElement;
   }
+  #picturNameElement(...args) {
+    let elementArr = document.createElement("div");
+    elementArr.classList.add("country-container");
+    args[0][0].forEach((element) => {
+      let div = document.createElement("div");
+      let img = document.createElement("img");
+      let name = document.createElement("h2");
+      img.src = element[0];
+      img.alt = element[1];
+      name.append(document.createTextNode(element[1]));
+      div.append(img, name);
+      elementArr.append(div);
+    });
+    return elementArr;
+  }
+  result() {
+    while (result.lastChild) {
+      result.lastChild.remove();
+    }
+    result.append(
+      this.#genderElement(this.gender),
+      this.#ageElement(this.age),
+      this.#picturNameElement(this.countres)
+    );
+    //this.#picturNameElement(this.countres);
+  }
 }
 // Form Event listner
 form.onsubmit = (e) => {
   e.preventDefault();
   let namee = name.value.toLowerCase();
+  nameAfter.style.setProperty("--after-content", '""');
   if (nameValidator(namee)) {
     let guessedObj = {};
+    addToLocalStorge(namee);
+    writeHistory();
     let genderPromise = fetch(`${API_URL[0] + namee}`).then((response) =>
       response.json()
     );
@@ -61,35 +90,23 @@ form.onsubmit = (e) => {
             e.value[0].flags.svg,
             e.value[0].name.official,
           ]);
-          console.log(guessedObj.countres);
+          // console.log(guessedObj.countres);
+          let builder = new guessed(
+            guessedObj.gender,
+            guessedObj.age,
+            guessedObj.countres
+          );
+          builder.result();
         });
       });
-    // .then(() => {
-    //   guessedObj.countress = guessedObj.countres.map((e) => {
-    //     return fetch(`${API_URL[3] + e.country_id.toLowerCase()}`);
-    //   });
-    // })
-    // .then(() => {
-    //   Promise.allSettled(guessedObj.countress)
-    //     .then(() => {
-    //       let response = guessedObj.countress.map((element) => {
-    //         return element;
-    //       });
-    //       return response;
-    //     })
-    //     .then((response) => {
-    //       response.forEach((element) => {
-    //         console.log(element);
-    //       });
-    //     });
-    // });
-    // Promise.allSettled(countres).then((results) => {
-    //   results.forEach((e) => {
-    //     console.log(e);
-    //   });
-    // });
+  } else {
+    nameAfter.style.setProperty(
+      "--after-content",
+      '"Please Enter Valid Name (No special charcter or numbers"'
+    );
   }
 };
+
 // Functions
 // nameValidator Take the Name(String) and Return if its accepted or not (boolean)
 function nameValidator(name) {
@@ -146,5 +163,24 @@ function nameValidator(name) {
   });
   return va;
 }
-
+function addToLocalStorge(name) {
+  localStorage.setItem("names", localStorage.getItem("names") + "." + name);
+}
+function writeHistory() {
+  let names = localStorage.getItem("names");
+  while (serchedNames.lastChild) {
+    serchedNames.lastChild.remove();
+  }
+  names = names.split(".");
+  names.shift();
+  names = [...new Set(names)];
+  names
+    .slice()
+    .reverse()
+    .forEach((element) => {
+      let name = document.createElement("p");
+      name.append(document.createTextNode(element));
+      serchedNames.append(name);
+    });
+}
 // test for before nameAfter.style.setProperty("--after-content", '"Yellow"');
